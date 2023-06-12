@@ -13,11 +13,13 @@ class  ifccParser : public antlr4::Parser {
 public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
-    RETURN = 8, CONST = 9, COMMENT = 10, DIRECTIVE = 11, WS = 12
+    T__7 = 8, RETURN = 9, CONST = 10, NAME = 11, COMMENT = 12, DIRECTIVE = 13, 
+    WS = 14
   };
 
   enum {
-    RuleAxiom = 0, RuleProg = 1, RuleReturn_stmt = 2
+    RuleAxiom = 0, RuleProg = 1, RuleInstruction = 2, RuleDeclaration = 3, 
+    RuleAffectation = 4, RuleReturn_stmt = 5
   };
 
   ifccParser(antlr4::TokenStream *input);
@@ -32,6 +34,9 @@ public:
 
   class AxiomContext;
   class ProgContext;
+  class InstructionContext;
+  class DeclarationContext;
+  class AffectationContext;
   class Return_stmtContext; 
 
   class  AxiomContext : public antlr4::ParserRuleContext {
@@ -52,6 +57,8 @@ public:
     ProgContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     Return_stmtContext *return_stmt();
+    std::vector<InstructionContext *> instruction();
+    InstructionContext* instruction(size_t i);
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
@@ -59,12 +66,73 @@ public:
 
   ProgContext* prog();
 
+  class  InstructionContext : public antlr4::ParserRuleContext {
+  public:
+    InstructionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    DeclarationContext *declaration();
+    AffectationContext *affectation();
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  InstructionContext* instruction();
+
+  class  DeclarationContext : public antlr4::ParserRuleContext {
+  public:
+    DeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+   
+    DeclarationContext() = default;
+    void copyFrom(DeclarationContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
+
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  Declaration_affectationContext : public DeclarationContext {
+  public:
+    Declaration_affectationContext(DeclarationContext *ctx);
+
+    std::vector<antlr4::tree::TerminalNode *> NAME();
+    antlr4::tree::TerminalNode* NAME(size_t i);
+    antlr4::tree::TerminalNode *CONST();
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  Declaration_simpleContext : public DeclarationContext {
+  public:
+    Declaration_simpleContext(DeclarationContext *ctx);
+
+    antlr4::tree::TerminalNode *NAME();
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  DeclarationContext* declaration();
+
+  class  AffectationContext : public antlr4::ParserRuleContext {
+  public:
+    AffectationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<antlr4::tree::TerminalNode *> NAME();
+    antlr4::tree::TerminalNode* NAME(size_t i);
+    antlr4::tree::TerminalNode *CONST();
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  AffectationContext* affectation();
+
   class  Return_stmtContext : public antlr4::ParserRuleContext {
   public:
     Return_stmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *RETURN();
     antlr4::tree::TerminalNode *CONST();
+    antlr4::tree::TerminalNode *NAME();
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    

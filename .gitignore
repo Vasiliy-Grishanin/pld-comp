@@ -32,3 +32,8 @@
 *.app
 
 .idea
+.vs
+.vscode
+cmake-build-debug
+tests/ifcc-test-output
+compiler/build

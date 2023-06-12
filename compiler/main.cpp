@@ -16,6 +16,7 @@ using namespace std;
 int main(int argn, const char **argv)
 {
   stringstream in;
+
   if (argn==2)
   {
      ifstream lecture(argv[1]);
