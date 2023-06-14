@@ -4,14 +4,27 @@ axiom : prog EOF ;
 
 prog : 'int' 'main' '(' ')' '{' instruction* return_stmt '}' ;
 
-instruction: declaration | affectation;
+instruction: declaration | affectation | expressionStmt;
 
 declaration:
     'int' NAME ';' #declaration_simple
-    |'int' NAME '=' (CONST | NAME) ';' #declaration_affectation;
-affectation: NAME '=' (CONST | NAME) ';' ;
+    |'int' NAME '=' expression ';' #declaration_affectation;
 
-return_stmt: RETURN (CONST | NAME) ';' ;
+affectation: NAME '=' expression ';' ;
+
+expressionStmt: expression ';' ;
+
+expression:
+      expression '*' expression  #multiplication
+    | expression '/' expression  #division
+    | expression '+' expression  #addition
+    | expression '-' expression  #subtraction
+    | '(' expression ')'         #parentheses
+    | CONST                      #constExpr
+    | NAME                       #varExpr
+    ;
+
+return_stmt: 'return' expression ';' ;
 
 RETURN : 'return' ;
 CONST : [0-9]+ ;
