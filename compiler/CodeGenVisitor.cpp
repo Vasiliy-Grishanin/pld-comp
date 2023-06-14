@@ -111,3 +111,12 @@ antlrcpp::Any CodeGenVisitor::visitAffectation(ifccParser::AffectationContext *c
     }
     return 0;
 }
+
+antlrcpp::Any CodeGenVisitor::visitAddition(ifccParser::AdditionContext *ctx) {
+    visit(ctx->expression(0));
+    std::cout << "    push %rax\n";  // sauvegarder la valeur de la première opérande
+    visit(ctx->expression(1));
+    std::cout << "    pop %rbx\n";   // récupérer la valeur de la première opérande
+    std::cout << "    add %rbx, %rax\n";  // ajouter les deux opérandes
+    return 0;
+}
