@@ -2,13 +2,15 @@
 #include "CodeGenVisitor.h"
 #include "Name.h"
 
-std::unordered_map<std::string, Name> CodeGenVisitor::namesMap;
+using namespace std;
+
+unordered_map<string, Name> CodeGenVisitor::namesMap;
 
 int positionToAssembler (int position) {
     return (position+1)*(-4);
 }
 
-int getPosition (std::string varName) {
+int getPosition (string varName) {
     auto it = CodeGenVisitor::namesMap.find(varName);
     if (it != CodeGenVisitor::namesMap.end()) {
         return it->second.getPosition();
@@ -20,20 +22,20 @@ int getPosition (std::string varName) {
 
 antlrcpp::Any CodeGenVisitor::visitProg(ifccParser::ProgContext *ctx)
 {
-    std::cout<< ".globl main\n" ;
-    std::cout<< " main: \n" ;
+    cout<< ".globl main\n" ;
+    cout<< " main: \n" ;
 
-    std::cout << "    # prologue\n";
-    std::cout << "    pushq %rbp    # save %rbp on the stack\n";
-    std::cout << "    movq %rsp, %rbp    # define %rbp for the current function\n";
+    cout << "    # prologue\n";
+    cout << "    pushq %rbp    # save %rbp on the stack\n";
+    cout << "    movq %rsp, %rbp    # define %rbp for the current function\n";
 
-    std::cout << "    # body\n";
+    cout << "    # body\n";
     this->visitChildren(ctx);
 
-    std::cout << "\n    # epilogue\n";
-    std::cout << "    popq %rbp    # restore %rbp from the stack\n";
+    cout << "\n    # epilogue\n";
+    cout << "    popq %rbp    # restore %rbp from the stack\n";
 
-    std::cout << "    ret\n";
+    cout << "    ret\n";
 
     return 0;
 }
@@ -42,10 +44,10 @@ antlrcpp::Any CodeGenVisitor::visitReturn_stmt(ifccParser::Return_stmtContext *c
 {
     if (ctx->CONST()) {
         int retval = stoi(ctx->CONST()->getText());
-        std::cout << "    movl $"<<retval<<", %eax\n" ;
+        cout << "    movl $"<<retval<<", %eax\n" ;
     } else if (ctx->NAME()) {
         int varPosition = getPosition(ctx->NAME()->getText());
-        std::cout << "    movl "<<positionToAssembler(varPosition)<<"(%rbp), %eax\n" ;
+        cout << "    movl "<<positionToAssembler(varPosition)<<"(%rbp), %eax\n" ;
     } else {
         exit(7);
     }
@@ -56,17 +58,17 @@ antlrcpp::Any CodeGenVisitor::visitReturn_stmt(ifccParser::Return_stmtContext *c
 }
 
 antlrcpp::Any CodeGenVisitor::visitDeclaration_simple(ifccParser::Declaration_simpleContext *ctx) {
-    std::string varName = ctx->NAME()->getText();
+    string varName = ctx->NAME()->getText();
     if (namesMap.count(varName) > 0) {
         // La variable a déjà été déclarée
         exit(2);
     }
-    namesMap.insert(std::make_pair(varName, Name(varName, namesMap.size())));
+    namesMap.insert(make_pair(varName, Name(varName, namesMap.size())));
     return 0;
 }
 
 antlrcpp::Any CodeGenVisitor::visitDeclaration_affectation(ifccParser::Declaration_affectationContext *ctx) {
-    std::string varName = ctx->NAME(0)->getText();
+    string varName = ctx->NAME(0)->getText();
     int varNameCount = namesMap.count(varName);
     if (varNameCount > 0) {
         // La variable a déjà été déclarée
@@ -74,17 +76,17 @@ antlrcpp::Any CodeGenVisitor::visitDeclaration_affectation(ifccParser::Declarati
     }
     int namesCount = namesMap.size();
     auto var = new Name(varName, namesCount);
-    namesMap.insert(std::make_pair(varName, Name(varName, namesMap.size())));
+    namesMap.insert(make_pair(varName, Name(varName, namesMap.size())));
     if(ctx->CONST()) {
         int varVal = stoi(ctx->CONST()->getText());
 
-        std::cout << "    movl $"<<varVal<<", " << positionToAssembler(namesCount) <<"(%rbp)\n" ;
+        cout << "    movl $"<<varVal<<", " << positionToAssembler(namesCount) <<"(%rbp)\n" ;
     } else if (ctx->NAME(1)) {
-        std::string otherVar = ctx->NAME(1)->getText();
+        string otherVar = ctx->NAME(1)->getText();
         int otherVarPosition = getPosition(otherVar);
 
-        std::cout << "    movl " << positionToAssembler(otherVarPosition) <<"(%rbp), %eax\n" ;
-        std::cout << "    movl %eax, "<<positionToAssembler(namesCount)<<"(%rbp)\n" ;
+        cout << "    movl " << positionToAssembler(otherVarPosition) <<"(%rbp), %eax\n" ;
+        cout << "    movl %eax, "<<positionToAssembler(namesCount)<<"(%rbp)\n" ;
     } else {
         // erreur dans la grammaire. Ni CONST ni NAME(1) n'est défini
         exit(3);
@@ -93,18 +95,18 @@ antlrcpp::Any CodeGenVisitor::visitDeclaration_affectation(ifccParser::Declarati
 }
 // NAME '=' (CONST | NAME) ';' ;
 antlrcpp::Any CodeGenVisitor::visitAffectation(ifccParser::AffectationContext *ctx) {
-    std::string varName = ctx->NAME(0)->getText();
+    string varName = ctx->NAME(0)->getText();
     int varPosition = getPosition(varName);
     auto it = namesMap.find(varName);
     if (ctx->NAME(1)) {
-        std::string otherVar = ctx->NAME(1)->getText();
+        string otherVar = ctx->NAME(1)->getText();
         int otherVarPosition = getPosition(otherVar);
-        std::cout << "    movl " << positionToAssembler(otherVarPosition) <<"(%rbp), %eax\n" ;
-        std::cout << "    movl %eax, "<<positionToAssembler(varPosition)<<"(%rbp)\n" ;
+        cout << "    movl " << positionToAssembler(otherVarPosition) <<"(%rbp), %eax\n" ;
+        cout << "    movl %eax, "<<positionToAssembler(varPosition)<<"(%rbp)\n" ;
 
     } else if (ctx->CONST()) {
-        std::string constValue = ctx->CONST()->getText();
-        std::cout << "    movl $" << constValue << ", "<<positionToAssembler(varPosition)<<"(%rbp)\n" ;
+        string constValue = ctx->CONST()->getText();
+        cout << "    movl $" << constValue << ", "<<positionToAssembler(varPosition)<<"(%rbp)\n" ;
     } else {
         // erreur dans la grammaire. NAME(1) n'est pas défini
         exit(6);
@@ -123,9 +125,9 @@ antlrcpp::Any CodeGenVisitor::visitAddition(ifccParser::AdditionContext *ctx) {
 
 antlrcpp::Any CodeGenVisitor::visitSubtraction(ifccParser::SubtractionContext *ctx) {
     visit(ctx->expression(0));
-    std::cout << "    push %rax\n";  // sauvegarder la valeur de la première opérande
+    cout << "    push %rax\n";  // sauvegarder la valeur de la première opérande
     visit(ctx->expression(1));
-    std::cout << "    pop %rbx\n";   // récupérer la valeur de la première opérande
-    std::cout << "    sub %rbx, %rax\n";  // soustraire la deuxième opérande de la première
+    cout << "    pop %rbx\n";   // récupérer la valeur de la première opérande
+    cout << "    sub %rbx, %rax\n";  // soustraire la deuxième opérande de la première
     return 0;
 }
