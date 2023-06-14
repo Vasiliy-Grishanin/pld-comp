@@ -2,7 +2,9 @@ grammar ifcc;
 
 axiom : prog EOF ;
 
-prog : 'int' 'main' '(' ')' '{' instruction* return_stmt '}' ;
+prog : 'int' 'main' '(' ')' '{' block '}' ;
+
+block : '{' instruction* return_stmt '}' ;
 
 instruction: declaration | affectation | expressionStmt;
 
