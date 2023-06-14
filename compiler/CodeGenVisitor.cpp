@@ -120,3 +120,12 @@ antlrcpp::Any CodeGenVisitor::visitAddition(ifccParser::AdditionContext *ctx) {
     std::cout << "    add %rbx, %rax\n";  // ajouter les deux opérandes
     return 0;
 }
+
+antlrcpp::Any CodeGenVisitor::visitSubtraction(ifccParser::SubtractionContext *ctx) {
+    visit(ctx->expression(0));
+    std::cout << "    push %rax\n";  // sauvegarder la valeur de la première opérande
+    visit(ctx->expression(1));
+    std::cout << "    pop %rbx\n";   // récupérer la valeur de la première opérande
+    std::cout << "    sub %rbx, %rax\n";  // soustraire la deuxième opérande de la première
+    return 0;
+}

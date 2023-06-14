@@ -39,6 +39,38 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitExpressionStmt(ifccParser::ExpressionStmtContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitDivision(ifccParser::DivisionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitParentheses(ifccParser::ParenthesesContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitVarExpr(ifccParser::VarExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitSubtraction(ifccParser::SubtractionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitMultiplication(ifccParser::MultiplicationContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitConstExpr(ifccParser::ConstExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitAddition(ifccParser::AdditionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitReturn_stmt(ifccParser::Return_stmtContext *ctx) override {
     return visitChildren(ctx);
   }

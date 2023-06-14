@@ -31,6 +31,22 @@ public:
 
     virtual antlrcpp::Any visitAffectation(ifccParser::AffectationContext *context) = 0;
 
+    virtual antlrcpp::Any visitExpressionStmt(ifccParser::ExpressionStmtContext *context) = 0;
+
+    virtual antlrcpp::Any visitDivision(ifccParser::DivisionContext *context) = 0;
+
+    virtual antlrcpp::Any visitParentheses(ifccParser::ParenthesesContext *context) = 0;
+
+    virtual antlrcpp::Any visitVarExpr(ifccParser::VarExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitSubtraction(ifccParser::SubtractionContext *context) = 0;
+
+    virtual antlrcpp::Any visitMultiplication(ifccParser::MultiplicationContext *context) = 0;
+
+    virtual antlrcpp::Any visitConstExpr(ifccParser::ConstExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitAddition(ifccParser::AdditionContext *context) = 0;
+
     virtual antlrcpp::Any visitReturn_stmt(ifccParser::Return_stmtContext *context) = 0;
 
 
