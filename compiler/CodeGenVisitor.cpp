@@ -99,3 +99,13 @@ antlrcpp::Any CodeGenVisitor::visitAffectation(ifccParser::AffectationContext *c
 
     return varName;
 }
+
+antlrcpp::Any CodeGenVisitor::visitConstExpr(ifccParser::ConstExprContext *ctx) {
+    int constValue = stoi(ctx->CONST()->getText());
+    int sizeStack = namesMap.size();
+    string varName = "tmp" + to_string(sizeStack);
+    auto var = new Name(varName, sizeStack);
+    namesMap.insert(make_pair(varName, *var));
+
+    return varName;
+}

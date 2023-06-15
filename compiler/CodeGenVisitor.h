@@ -11,9 +11,12 @@ class  CodeGenVisitor : public ifccBaseVisitor {
 	public:
         virtual antlrcpp::Any visitProg(ifccParser::ProgContext *ctx) override ;
         virtual antlrcpp::Any visitReturn_stmt(ifccParser::Return_stmtContext *ctx) override;
+        // Déclaration/affectation
         virtual antlrcpp::Any visitDeclaration_simple(ifccParser::Declaration_simpleContext *ctx) override;
         virtual antlrcpp::Any visitDeclaration_affectation(ifccParser::Declaration_affectationContext *ctx) override;
         virtual antlrcpp::Any visitAffectation(ifccParser::AffectationContext *ctx) override;
+        // Expressions
+        virtual antlrcpp::Any visitConstExpr(ifccParser::ConstExprContext *ctx) override;
 
         static std::unordered_map<std::string, Name> namesMap;
 };

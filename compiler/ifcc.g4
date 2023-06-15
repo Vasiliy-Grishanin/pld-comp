@@ -13,7 +13,12 @@ declaration:
 affectation: NAME '=' expression ';' ;
 
 expression:
-    CONST                      #constExpr
+      expression '*' expression  #multiplication
+    | expression '/' expression  #division
+    | expression '+' expression  #addition
+    | expression '-' expression  #subtraction
+    | '(' expression ')'         #parentheses
+    | CONST                      #constExpr
     | NAME                       #varExpr
     ;
 
