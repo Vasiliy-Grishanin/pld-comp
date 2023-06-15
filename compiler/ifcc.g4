@@ -22,7 +22,7 @@ expression:
     | NAME                       #varExpr
     ;
 
-return_stmt: 'return' expression ';' ;
+return_stmt: RETURN expression ';' ;
 
 RETURN : 'return' ;
 CONST : [0-9]+ ;
