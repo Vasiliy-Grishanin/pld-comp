@@ -61,34 +61,27 @@ antlrcpp::Any CodeGenVisitor::visitDeclaration_simple(ifccParser::Declaration_si
         exit(2);
     }
     namesMap.insert(make_pair(varName, Name(varName, namesMap.size())));
-    return 0;
+    return (antlrcpp::Any)varName;
 }
 
 antlrcpp::Any CodeGenVisitor::visitDeclaration_affectation(ifccParser::Declaration_affectationContext *ctx) {
-    string varName = ctx->NAME(0)->getText();
-    int varNameCount = namesMap.count(varName);
+    string returnVar = visit(ctx->expression());
+    int assemblerPos = getAssemblerFromVarName(returnVar);
+    int varNameCount = namesMap.count(returnVar);
     if (varNameCount > 0) {
         // La variable a déjà été déclarée
         exit(4);
     }
-    int namesCount = namesMap.size();
-    auto var = new Name(varName, namesCount);
-    namesMap.insert(make_pair(varName, Name(varName, namesMap.size())));
-    if(ctx->CONST()) {
-        int varVal = stoi(ctx->CONST()->getText());
+    int sizeStack = namesMap.size();
+    auto var = new Name(returnVar, sizeStack);
+    namesMap.insert(make_pair(returnVar, *var));
+    //movl    -4(%rbp), %eax
+    //movl    %eax, -8(%rbp)
 
-        cout << "    movl $"<<varVal<<", " << positionToAssembler(namesCount) <<"(%rbp)\n" ;
-    } else if (ctx->NAME(1)) {
-        string otherVar = ctx->NAME(1)->getText();
-        int otherVarPosition = getPosition(otherVar);
+    cout << "    movl " << assemblerPos<<"(%rbp), %eax\n";
+    cout << "    movl " << positionToAssembler(var->getPosition())<<"(%rbp)\n";
 
-        cout << "    movl " << positionToAssembler(otherVarPosition) <<"(%rbp), %eax\n" ;
-        cout << "    movl %eax, "<<positionToAssembler(namesCount)<<"(%rbp)\n" ;
-    } else {
-        // erreur dans la grammaire. Ni CONST ni NAME(1) n'est défini
-        exit(3);
-    }
-    return 0;
+    return (antlrcpp::Any)var->getName();
 }
 // NAME '=' (CONST | NAME) ';' ;
 antlrcpp::Any CodeGenVisitor::visitAffectation(ifccParser::AffectationContext *ctx) {
