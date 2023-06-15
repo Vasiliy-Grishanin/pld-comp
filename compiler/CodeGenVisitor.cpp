@@ -111,3 +111,13 @@ antlrcpp::Any CodeGenVisitor::visitConstExpr(ifccParser::ConstExprContext *ctx) 
 
     return varName;
 }
+antlrcpp::Any visitVarExpr(ifccParser::VarExprContext *ctx){
+    /*int nameVar = ;
+    int offsetVar = getAssemblerFromVarName(nameVar);
+    int sizeStack = namesMap.size();
+    string varName = "tmp" + to_string(sizeStack);
+    auto var = new Name(varName, sizeStack);
+    namesMap.insert(make_pair(varName, *var));*/
+
+    return ctx->NAME()->getText();
+}
