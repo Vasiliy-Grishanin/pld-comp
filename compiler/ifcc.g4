@@ -6,7 +6,7 @@ prog : 'int' 'main' '(' ')' '{' block '}' ;
 
 block : '{' instruction* return_stmt '}' ;
 
-instruction: declaration | affectation | expressionStmt;
+instruction: declaration | affectation | expression;
 
 declaration:
     'int' NAME ';' #declaration_simple
@@ -14,15 +14,8 @@ declaration:
 
 affectation: NAME '=' expression ';' ;
 
-expressionStmt: expression ';' ;
-
 expression:
-      expression '*' expression  #multiplication
-    | expression '/' expression  #division
-    | expression '+' expression  #addition
-    | expression '-' expression  #subtraction
-    | '(' expression ')'         #parentheses
-    | CONST                      #constExpr
+    CONST                      #constExpr
     | NAME                       #varExpr
     ;
 

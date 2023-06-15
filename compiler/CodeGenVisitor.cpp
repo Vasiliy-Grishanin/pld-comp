@@ -20,6 +20,11 @@ int getPosition (string varName) {
     }
 }
 
+int getAssemblerFromVarName (string varName) {
+    int position = getPosition(varName);
+    return positionToAssembler(position);
+}
+
 antlrcpp::Any CodeGenVisitor::visitProg(ifccParser::ProgContext *ctx)
 {
     cout<< ".globl main\n" ;
@@ -42,19 +47,11 @@ antlrcpp::Any CodeGenVisitor::visitProg(ifccParser::ProgContext *ctx)
 
 antlrcpp::Any CodeGenVisitor::visitReturn_stmt(ifccParser::Return_stmtContext *ctx)
 {
-    if (ctx->CONST()) {
-        int retval = stoi(ctx->CONST()->getText());
-        cout << "    movl $"<<retval<<", %eax\n" ;
-    } else if (ctx->NAME()) {
-        int varPosition = getPosition(ctx->NAME()->getText());
-        cout << "    movl "<<positionToAssembler(varPosition)<<"(%rbp), %eax\n" ;
-    } else {
-        exit(7);
-    }
+    string returnVar = visit(ctx->expression());
+    int assemblerPos = getAssemblerFromVarName(returnVar);
+    cout << "    movl "<<assemblerPos<<"(%rbp), %eax\n" ;
 
-
-
-    return 0;
+    return (antlrcpp::Any)returnVar;
 }
 
 antlrcpp::Any CodeGenVisitor::visitDeclaration_simple(ifccParser::Declaration_simpleContext *ctx) {
