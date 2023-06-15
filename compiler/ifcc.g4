@@ -2,11 +2,9 @@ grammar ifcc;
 
 axiom : prog EOF ;
 
-prog : 'int' 'main' '(' ')' '{' block '}' ;
+prog : 'int' 'main' '(' ')' '{' instruction* return_stmt '}' ;
 
-block : '{' instruction* return_stmt '}' ;
-
-instruction: declaration | affectation | expression;
+instruction: declaration | affectation;
 
 declaration:
     'int' NAME ';' #declaration_simple
