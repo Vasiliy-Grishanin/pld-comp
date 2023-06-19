@@ -105,7 +105,7 @@ antlrcpp::Any CodeGenVisitor::visitConstExpr(ifccParser::ConstExprContext *ctx) 
     int sizeStack = namesMap.size();
     string varName = "tmp" + to_string(sizeStack);
     auto var = new Name(varName, sizeStack);
-    namesMap.insert(make_pair(varName, *var));
+    namesMap.insert(make_pair(varName, Name(varName, sizeStack)));
 
     cout << "    movl $" << constValue << ", " << mapPosToAssembler(sizeStack) << "(%rbp)\n";
 
