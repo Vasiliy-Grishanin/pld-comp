@@ -35,6 +35,15 @@ string createTmpVar(int value) {
     return varName;
 }
 
+string createTmpVar(string registre) {
+    int sizeStack = CodeGenVisitor::namesMap.size();
+    string varName = "tmp" + to_string(sizeStack);
+    CodeGenVisitor::namesMap.insert(make_pair
+                                            (varName, Name(varName, sizeStack)));
+    cout << "    movl " << registre << ", " << mapPosToAssembler(sizeStack) << "(%rbp)\n";
+    return varName;
+}
+
 // Visiteurs
 
 antlrcpp::Any CodeGenVisitor::visitProg(ifccParser::ProgContext *ctx)
