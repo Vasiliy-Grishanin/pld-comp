@@ -29,8 +29,7 @@ int getAssemblerFromVarName (string varName) {
 string createTmpVar(int value) {
     int sizeStack = CodeGenVisitor::namesMap.size();
     string varName = "tmp" + to_string(sizeStack);
-    CodeGenVisitor::namesMap.insert(make_pair
-                                            (varName, Name(varName, sizeStack)));
+    CodeGenVisitor::namesMap.insert(make_pair(varName, Name(varName, sizeStack)));
     cout << "    movl $" << value << ", " << mapPosToAssembler(sizeStack) << "(%rbp)\n";
     return varName;
 }
@@ -155,5 +154,20 @@ antlrcpp::Any CodeGenVisitor::visitAddition(ifccParser::AdditionContext *ctx) {
 }
 
 antlrcpp::Any CodeGenVisitor::visitSubtraction(ifccParser::SubtractionContext *ctx) {
-    return nullptr;
+    string expr1 = visit(ctx->expression(0));
+    string expr2 = visit(ctx->expression(1));
+    //cout << "expr1 " << expr1 << endl;
+    //cout << "expr2 " << expr2 << endl;
+    int assemblerPosExpr = getAssemblerFromVarName(expr1);
+    //cout << "assembler 1 " << assemblerPosExpr << endl;
+    int assemblerPosExpr2 = getAssemblerFromVarName(expr2);
+    //cout << "assembler 2 " << assemblerPosExpr2 << endl;
+
+    cout << "    movl " << assemblerPosExpr << "(%rbp), %eax\n";
+    //cout << "    movl " << assemblerPosExpr2 << "(%rbp), %eax\n";
+    cout << "    subl " <<assemblerPosExpr2<<  "(%rbp), %eax\n";
+
+    string resultVar = createTmpVar("%eax");
+
+    return resultVar;
 }
