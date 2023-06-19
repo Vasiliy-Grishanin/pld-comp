@@ -16,13 +16,14 @@ class  CodeGenVisitor : public ifccBaseVisitor {
         virtual antlrcpp::Any visitDeclaration_affectation(ifccParser::Declaration_affectationContext *ctx) override;
         virtual antlrcpp::Any visitAffectation(ifccParser::AffectationContext *ctx) override;
         // Expressions
+        virtual antlrcpp::Any visitMoinsUnaire(ifccParser::MoinsUnaireContext *ctx) override;
+
         virtual antlrcpp::Any visitConstExpr(ifccParser::ConstExprContext *ctx) override;
         virtual antlrcpp::Any visitVarExpr(ifccParser::VarExprContext *ctx) override;
 
-        virtual antlrcpp::Any visitParentheses(ifccParser::ParenthesesContext *ctx);
-        
-        virtual antlrcpp::Any visitAddition(ifccParser::AdditionContext *ctx) override;
-        virtual antlrcpp::Any visitSubtraction(ifccParser::SubtractionContext *ctx) override;
+        virtual antlrcpp::Any visitParentheses(ifccParser::ParenthesesContext *ctx) override;
+
+        virtual antlrcpp::Any visitAdd_sub(ifccParser::Add_subContext *ctx) override;
 
         static std::unordered_map<std::string, Name> namesMap;
 };

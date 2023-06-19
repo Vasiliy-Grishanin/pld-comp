@@ -137,7 +137,17 @@ antlrcpp::Any CodeGenVisitor::visitVarExpr(ifccParser::VarExprContext *ctx){
     return ctx->NAME()->getText();
 }
 
-antlrcpp::Any CodeGenVisitor::visitAddition(ifccParser::AdditionContext *ctx) {
+antlrcpp::Any CodeGenVisitor::visitMoinsUnaire(ifccParser::MoinsUnaireContext *ctx) {
+    string exp = visit(ctx->expression());
+    int assemblerPosExp = getAssemblerFromVarName(exp);
+
+    cout << "    movl " << assemblerPosExp << "(%rbp), %eax\n";
+    cout << "    negl %eax\n";
+
+    return createTmpVar("%eax");
+}
+
+antlrcpp::Any CodeGenVisitor::visitAdd_sub(ifccParser::Add_subContext *ctx) {
     string exp0 = visit(ctx->expression(0));
     string exp1 = visit(ctx->expression(1));
 
@@ -145,29 +155,13 @@ antlrcpp::Any CodeGenVisitor::visitAddition(ifccParser::AdditionContext *ctx) {
     int assemblerPosExp1 = getAssemblerFromVarName(exp1);
 
     cout << "    movl " << assemblerPosExp0 << "(%rbp), %eax\n";
-    //cout << "    movl " << assemblerPosExp1 << "(%rbp), %eax\n";
-    cout << "    addl " <<assemblerPosExp1<<  "(%rbp), %eax\n";
 
-    string resultVar = createTmpVar("%eax");
-
-    return resultVar;
-}
-
-antlrcpp::Any CodeGenVisitor::visitSubtraction(ifccParser::SubtractionContext *ctx) {
-    string expr1 = visit(ctx->expression(0));
-    string expr2 = visit(ctx->expression(1));
-    //cout << "expr1 " << expr1 << endl;
-    //cout << "expr2 " << expr2 << endl;
-    int assemblerPosExpr = getAssemblerFromVarName(expr1);
-    //cout << "assembler 1 " << assemblerPosExpr << endl;
-    int assemblerPosExpr2 = getAssemblerFromVarName(expr2);
-    //cout << "assembler 2 " << assemblerPosExpr2 << endl;
-
-    cout << "    movl " << assemblerPosExpr << "(%rbp), %eax\n";
-    //cout << "    movl " << assemblerPosExpr2 << "(%rbp), %eax\n";
-    cout << "    subl " <<assemblerPosExpr2<<  "(%rbp), %eax\n";
-
-    string resultVar = createTmpVar("%eax");
-
-    return resultVar;
+    string op = ctx->children[1]->getText();
+    if (op == "+") {
+        cout << "    addl " <<assemblerPosExp1<<  "(%rbp), %eax\n";
+    } else {
+        cout << "    subl " <<assemblerPosExp1<<  "(%rbp), %eax\n";
+    }
+    
+    return createTmpVar("%eax");;
 }

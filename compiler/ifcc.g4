@@ -13,10 +13,10 @@ declaration:
 affectation: NAME '=' expression ';' ;
 
 expression:
-      expression '*' expression  #multiplication
+      '-' expression             #moinsUnaire
+    | expression '*' expression  #multiplication
     | expression '/' expression  #division
-    | expression '+' expression  #addition
-    | expression '-' expression  #subtraction
+    | expression ('+' | '-') expression  #add_sub
     | '(' expression ')'         #parentheses
     | CONST                      #constExpr
     | NAME                       #varExpr
