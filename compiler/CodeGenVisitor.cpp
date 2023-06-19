@@ -139,7 +139,19 @@ antlrcpp::Any CodeGenVisitor::visitVarExpr(ifccParser::VarExprContext *ctx){
 }
 
 antlrcpp::Any CodeGenVisitor::visitAddition(ifccParser::AdditionContext *ctx) {
-    return nullptr;
+    string exp0 = visit(ctx->expression(0));
+    string exp1 = visit(ctx->expression(1));
+
+    int assemblerPosExp0 = getAssemblerFromVarName(exp0);
+    int assemblerPosExp1 = getAssemblerFromVarName(exp1);
+
+    cout << "    movl " << assemblerPosExp0 << "(%rbp), %edx\n";
+    cout << "    movl " << assemblerPosExp1 << "(%rbp), %eax\n";
+    cout << "    %edx, %eax\n";
+
+    string resultVar = createTmpVar("%eax");
+
+    return resultVar;
 }
 
 antlrcpp::Any CodeGenVisitor::visitSubtraction(ifccParser::SubtractionContext *ctx) {
