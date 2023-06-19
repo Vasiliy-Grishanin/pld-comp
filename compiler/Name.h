@@ -12,6 +12,8 @@ class Name {
 public:
     Name(const std::string name, int position);
 
+    Name(const std::string &name, int position, bool initialized);
+
     const std::string getName() const;
 
     void setName(const std::string &name);
@@ -20,9 +22,14 @@ public:
 
     void setPosition(int position);
 
+    bool isInitialized() const;
+
+    void setInitialized(bool initialized);
+
 private:
     std::string name;
     int position;
+    bool initialized = false;
 };
 
 

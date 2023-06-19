@@ -14,7 +14,12 @@ int mapPosToAssembler (int position) {
 int getMapPos (string varName) {
     auto it = CodeGenVisitor::namesMap.find(varName);
     if (it != CodeGenVisitor::namesMap.end()) {
-        return it->second.getPosition();
+        if (it->second.isInitialized()) {
+            return it->second.getPosition();
+        } else {
+            //TODO: Warning "Utilisation d'une variable non initialisée"
+            exit(6);
+        }
     } else {
         // variable varName non définie
         exit(5);
@@ -26,10 +31,22 @@ int getAssemblerFromVarName (string varName) {
     return mapPosToAssembler(position);
 }
 
+void setVarInitializedTrue (string varName) {
+    auto it = CodeGenVisitor::namesMap.find(varName);
+    if (it != CodeGenVisitor::namesMap.end()) {
+        if (!it->second.isInitialized()) {
+            it->second.setInitialized(true);
+        }
+    } else {
+        // variable varName non définie
+        exit(7);
+    }
+}
+
 string createTmpVar(int value) {
     int sizeStack = CodeGenVisitor::namesMap.size();
     string varName = "tmp" + to_string(sizeStack);
-    CodeGenVisitor::namesMap.insert(make_pair(varName, Name(varName, sizeStack)));
+    CodeGenVisitor::namesMap.insert(make_pair(varName, Name(varName, sizeStack, true)));
     cout << "    movl $" << value << ", " << mapPosToAssembler(sizeStack) << "(%rbp)\n";
     return varName;
 }
@@ -38,7 +55,7 @@ string createTmpVar(string registre) {
     int sizeStack = CodeGenVisitor::namesMap.size();
     string varName = "tmp" + to_string(sizeStack);
     CodeGenVisitor::namesMap.insert(make_pair
-                                            (varName, Name(varName, sizeStack)));
+                                            (varName, Name(varName, sizeStack, true)));
     cout << "    movl " << registre << ", " << mapPosToAssembler(sizeStack) << "(%rbp)\n";
     return varName;
 }
@@ -97,7 +114,7 @@ antlrcpp::Any CodeGenVisitor::visitDeclaration_affectation(ifccParser::Declarati
         exit(4);
     }
     int sizeStack = namesMap.size();
-    auto var = new Name(varName, sizeStack);
+    auto var = new Name(varName, sizeStack, true);
     namesMap.insert(make_pair(varName, *var));
 
     int assemblerPosVar = getAssemblerFromVarName(varName);
@@ -111,6 +128,8 @@ antlrcpp::Any CodeGenVisitor::visitDeclaration_affectation(ifccParser::Declarati
 // NAME '=' expression ';' ;
 antlrcpp::Any CodeGenVisitor::visitAffectation(ifccParser::AffectationContext *ctx) {
     string varName = ctx->NAME()->getText();
+    setVarInitializedTrue(varName);
+
     string expressionName = visit(ctx->expression());
     int assemblerPosExpr = getAssemblerFromVarName(expressionName);
     int assemblerPosVar = getAssemblerFromVarName(varName);
