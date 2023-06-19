@@ -144,9 +144,9 @@ antlrcpp::Any CodeGenVisitor::visitAddition(ifccParser::AdditionContext *ctx) {
     int assemblerPosExp0 = getAssemblerFromVarName(exp0);
     int assemblerPosExp1 = getAssemblerFromVarName(exp1);
 
-    cout << "    movl " << assemblerPosExp0 << "(%rbp), %edx\n";
-    cout << "    movl " << assemblerPosExp1 << "(%rbp), %eax\n";
-    cout << "    addl %edx, %eax\n";
+    cout << "    movl " << assemblerPosExp0 << "(%rbp), %eax\n";
+    //cout << "    movl " << assemblerPosExp1 << "(%rbp), %eax\n";
+    cout << "    addl " <<assemblerPosExp1<<  "(%rbp), %eax\n";
 
     string resultVar = createTmpVar("%eax");
 
