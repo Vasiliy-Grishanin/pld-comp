@@ -16,7 +16,7 @@ int getMapPos (string varName) {
         return it->second.getPosition();
     } else {
         // variable varName non définie
-        exit (5);
+        exit(5);
     }
 }
 
@@ -70,9 +70,8 @@ antlrcpp::Any CodeGenVisitor::visitDeclaration_affectation(ifccParser::Declarati
     string varName = ctx->NAME()->getText();
     string expressionName = visit(ctx->expression());
     int assemblerPosExpr = getAssemblerFromVarName(expressionName);
-    int assemblerPosVar = getAssemblerFromVarName(varName);
 
-    int varNameCount = namesMap.count(expressionName);
+    int varNameCount = namesMap.count(varName);
     if (varNameCount > 0) {
         // La variable a déjà été déclarée
         exit(4);
@@ -80,6 +79,8 @@ antlrcpp::Any CodeGenVisitor::visitDeclaration_affectation(ifccParser::Declarati
     int sizeStack = namesMap.size();
     auto var = new Name(varName, sizeStack);
     namesMap.insert(make_pair(varName, *var));
+
+    int assemblerPosVar = getAssemblerFromVarName(varName);
 
     cout << "    movl " << assemblerPosExpr << "(%rbp), %eax\n";
     cout << "    movl %eax, " << mapPosToAssembler(sizeStack) << "(%rbp)\n";
