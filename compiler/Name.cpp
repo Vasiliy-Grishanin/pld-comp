@@ -6,12 +6,12 @@
 
 Name::Name(std::string name, int position) : name(name), position(position) {}
 
-const std::string &Name::getName() const {
+const std::string Name::getName() const {
     return name;
 }
 
 void Name::setName(const std::string &name) {
-    Name::name = name;
+    this->name = name;
 }
 
 int Name::getPosition() const {
@@ -19,5 +19,5 @@ int Name::getPosition() const {
 }
 
 void Name::setPosition(int position) {
-    Name::position = position;
+    this->position = position;
 }

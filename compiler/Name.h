@@ -12,7 +12,7 @@ class Name {
 public:
     Name(const std::string name, int position);
 
-    const std::string &getName() const;
+    const std::string getName() const;
 
     void setName(const std::string &name);
 
