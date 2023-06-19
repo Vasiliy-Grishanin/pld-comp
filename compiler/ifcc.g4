@@ -14,10 +14,9 @@ affectation: NAME '=' expression ';' ;
 
 expression:
       '-' expression             #moinsUnaire
-    | expression '*' expression  #multiplication
-    | expression '/' expression  #division
-    | expression ('+' | '-') expression  #add_sub
     | '(' expression ')'         #parentheses
+    | expression ('*' | '/') expression  #mult_div
+    | expression ('+' | '-') expression  #add_sub
     | CONST                      #constExpr
     | NAME                       #varExpr
     ;
