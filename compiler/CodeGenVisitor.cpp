@@ -159,9 +159,31 @@ antlrcpp::Any CodeGenVisitor::visitAdd_sub(ifccParser::Add_subContext *ctx) {
     string op = ctx->children[1]->getText();
     if (op == "+") {
         cout << "    addl " <<assemblerPosExp1<<  "(%rbp), %eax\n";
-    } else {
+    } else { // "-" soustraction
         cout << "    subl " <<assemblerPosExp1<<  "(%rbp), %eax\n";
     }
-    
-    return createTmpVar("%eax");;
+
+    return createTmpVar("%eax");
 }
+
+antlrcpp::Any CodeGenVisitor::visitMult_div(ifccParser::Mult_divContext *ctx) {
+    string exp0 = visit(ctx->expression(0));
+    string exp1 = visit(ctx->expression(1));
+
+    int assemblerPosExp0 = getAssemblerFromVarName(exp0);
+    int assemblerPosExp1 = getAssemblerFromVarName(exp1);
+
+    cout << "    movl " << assemblerPosExp0 << "(%rbp), %eax\n";
+
+    string op = ctx->children[1]->getText();
+    if (op == "*") {
+        cout << "    imull " <<assemblerPosExp1<<  "(%rbp), %eax\n";
+    } else { // "/" division
+        cout << "    cltd\n";
+        cout << "    idivl " <<assemblerPosExp1<<  "(%rbp)\n";
+    }
+
+    return createTmpVar("%eax");
+}
+
+
