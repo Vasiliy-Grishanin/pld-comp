@@ -102,8 +102,7 @@ antlrcpp::Any CodeGenVisitor::visitAffectation(ifccParser::AffectationContext *c
 }
 
 antlrcpp::Any CodeGenVisitor::visitParentheses(ifccParser::ParenthesesContext *ctx){
-    string expressionName = visit(ctx->expression());
-    return expressionName;
+    return visit(ctx->expression());
 }
 
 antlrcpp::Any CodeGenVisitor::visitConstExpr(ifccParser::ConstExprContext *ctx) {
@@ -119,4 +118,12 @@ antlrcpp::Any CodeGenVisitor::visitConstExpr(ifccParser::ConstExprContext *ctx) 
 }
 antlrcpp::Any CodeGenVisitor::visitVarExpr(ifccParser::VarExprContext *ctx){
     return ctx->NAME()->getText();
+}
+
+antlrcpp::Any CodeGenVisitor::visitAddition(ifccParser::AdditionContext *ctx) {
+    
+}
+
+antlrcpp::Any CodeGenVisitor::visitSubtraction(ifccParser::SubtractionContext *ctx) {
+
 }
