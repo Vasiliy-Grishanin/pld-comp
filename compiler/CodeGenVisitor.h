@@ -18,7 +18,7 @@ class  CodeGenVisitor : public ifccBaseVisitor {
         // Expressions
         virtual antlrcpp::Any visitConstExpr(ifccParser::ConstExprContext *ctx) override;
         virtual antlrcpp::Any visitVarExpr(ifccParser::VarExprContext *ctx) override;
-
+        virtual antlrcpp::Any visitParentheses(ifccParser::ParenthesesContext *ctx);
         static std::unordered_map<std::string, Name> namesMap;
 };
 

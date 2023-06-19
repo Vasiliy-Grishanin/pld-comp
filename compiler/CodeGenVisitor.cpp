@@ -101,6 +101,11 @@ antlrcpp::Any CodeGenVisitor::visitAffectation(ifccParser::AffectationContext *c
     return varName;
 }
 
+antlrcpp::Any CodeGenVisitor::visitParentheses(ifccParser::ParenthesesContext *ctx){
+    string expressionName = visit(ctx->expression());
+    return expressionName;
+}
+
 antlrcpp::Any CodeGenVisitor::visitConstExpr(ifccParser::ConstExprContext *ctx) {
     int constValue = stoi(ctx->CONST()->getText());
     int sizeStack = namesMap.size();
