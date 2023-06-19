@@ -6,6 +6,7 @@ using namespace std;
 
 unordered_map<string, Name> CodeGenVisitor::namesMap;
 
+// Utils
 int mapPosToAssembler (int position) {
     return (position+1)*(-4);
 }
@@ -24,6 +25,17 @@ int getAssemblerFromVarName (string varName) {
     int position = getMapPos(varName);
     return mapPosToAssembler(position);
 }
+
+string createTmpVar(int value) {
+    int sizeStack = CodeGenVisitor::namesMap.size();
+    string varName = "tmp" + to_string(sizeStack);
+    CodeGenVisitor::namesMap.insert(make_pair
+                                            (varName, Name(varName, sizeStack)));
+    cout << "    movl $" << value << ", " << mapPosToAssembler(sizeStack) << "(%rbp)\n";
+    return varName;
+}
+
+// Visiteurs
 
 antlrcpp::Any CodeGenVisitor::visitProg(ifccParser::ProgContext *ctx)
 {
@@ -107,23 +119,20 @@ antlrcpp::Any CodeGenVisitor::visitParentheses(ifccParser::ParenthesesContext *c
 
 antlrcpp::Any CodeGenVisitor::visitConstExpr(ifccParser::ConstExprContext *ctx) {
     int constValue = stoi(ctx->CONST()->getText());
-    int sizeStack = namesMap.size();
-    string varName = "tmp" + to_string(sizeStack);
-    auto var = new Name(varName, sizeStack);
-    namesMap.insert(make_pair(varName, Name(varName, sizeStack)));
 
-    cout << "    movl $" << constValue << ", " << mapPosToAssembler(sizeStack) << "(%rbp)\n";
+    string varName = createTmpVar(constValue);
 
     return varName;
 }
+
 antlrcpp::Any CodeGenVisitor::visitVarExpr(ifccParser::VarExprContext *ctx){
     return ctx->NAME()->getText();
 }
 
 antlrcpp::Any CodeGenVisitor::visitAddition(ifccParser::AdditionContext *ctx) {
-    
+    return nullptr;
 }
 
 antlrcpp::Any CodeGenVisitor::visitSubtraction(ifccParser::SubtractionContext *ctx) {
-
+    return nullptr;
 }
