@@ -18,6 +18,7 @@ expression:
     | expression ('+' | '-') expression  #add_sub
     | '(' expression ')'         #parentheses
     | expression ('*' | '/') expression  #mult_div
+    | expression ('<' | '>') expression #supp_inf_strict
     | CONST                      #constExpr
     | NAME                       #varExpr
     ;
