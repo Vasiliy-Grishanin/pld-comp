@@ -42,3 +42,4 @@ COMMENT_BLOC : '/*' .*? '*/' -> channel(HIDDEN) ;
 COMMENT_BIS : '//' .*? '\n'-> skip;
 DIRECTIVE : '#' .*? '\n' -> skip ;
 WS    : [ \t\r\n] -> channel(HIDDEN);
+
