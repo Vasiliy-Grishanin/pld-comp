@@ -32,6 +32,9 @@ class  CodeGenVisitor : public ifccBaseVisitor {
         virtual antlrcpp::Any visitSupp_inf_strict(ifccParser::Supp_inf_strictContext *ctx) override;
         virtual antlrcpp::Any visitEgal_diff(ifccParser::Egal_diffContext *ctx) override;
 
+        //Bit à bit
+        virtual antlrcpp::Any visitOperation_bit(ifccParser::Operation_bitContext *ctx) override;
+
         static std::unordered_map<std::string, Name> namesMap;
 };
 

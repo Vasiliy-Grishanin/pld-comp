@@ -258,4 +258,23 @@ antlrcpp::Any CodeGenVisitor::visitEgal_diff(ifccParser::Egal_diffContext *ctx){
     return createTmpVar("%eax");
 }
 
+antlrcpp::Any CodeGenVisitor::visitOperation_bit(ifccParser::Operation_bitContext *ctx){
+    string exp0 = visit(ctx->expression(0));
+    string exp1 = visit(ctx->expression(1));
+
+    int assemblerPosExp0 = getAssemblerFromVarName(exp0);
+    int assemblerPosExp1 = getAssemblerFromVarName(exp1);
+    cout << "    movl " << assemblerPosExp0 << "(%rbp), %eax\n";
+    string op = ctx->children[1]->getText();
+    if(op == "|"){
+        cout << "orl    " << assemblerPosExp1 <<"(%rbp), %eax\n";
+    }
+    else if(op == "&"){
+        cout << "andl    " << assemblerPosExp1 <<"(%rbp), %eax\n";
+    }else{
+        cout << "xorl    " << assemblerPosExp1 <<"(%rbp), %eax\n";
+    }
+    return createTmpVar("%eax");
+}
+
 

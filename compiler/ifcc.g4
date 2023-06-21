@@ -13,14 +13,21 @@ declaration:
 affectation: NAME '=' expression ';' ;
 
 expression:
-      '-' expression             #moinsUnaire
+    '!' expression #inverse
+    |  '-' expression             #moinsUnaire
     | '(' expression ')'         #parentheses
     | expression ('*' | '/') expression  #mult_div
     | expression ('+' | '-') expression  #add_sub
+    | expression ('<' | '>') expression #supp_inf_strict
+    | expression ('!=' | '==') expression #egal_diff
+    | expression ('|' | '&' | '^') expression #operation_bit
     | function_call              #functionCallExpr
     | CONST                      #constExpr
     | NAME                       #varExpr
     ;
+
+function_call: NAME '(' arguments? ')' ;
+
 
 function_call: NAME '(' arguments? ')' ;
 
