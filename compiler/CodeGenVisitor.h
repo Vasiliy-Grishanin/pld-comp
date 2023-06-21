@@ -26,6 +26,7 @@ class  CodeGenVisitor : public ifccBaseVisitor {
         virtual antlrcpp::Any visitAdd_sub(ifccParser::Add_subContext *ctx) override;
         virtual antlrcpp::Any visitMult_div(ifccParser::Mult_divContext *ctx) override;
 
+        virtual antlrcpp::Any visitInverse(ifccParser::InverseContext *ctx) override;
         static std::unordered_map<std::string, Name> namesMap;
 };
 

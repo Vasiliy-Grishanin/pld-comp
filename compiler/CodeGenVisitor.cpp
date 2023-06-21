@@ -185,6 +185,17 @@ antlrcpp::Any CodeGenVisitor::visitAdd_sub(ifccParser::Add_subContext *ctx) {
     return createTmpVar("%eax");
 }
 
+antlrcpp::Any CodeGenVisitor::visitInverse(ifccParser::InverseContext *ctx){
+    string exp = visit(ctx->expression());
+    //cout << "exp " << exp << endl;
+    int assemblerPosExp = getAssemblerFromVarName(exp);
+    cout << "    cmpl    $0, " <<  assemblerPosExp << "(%rbp)\n";
+    cout << "    sete    %al\n";
+    cout << "    movzbl  %al, %eax\n";
+    cout << "    movl    %eax, " << assemblerPosExp << "(%rbp)\n";
+    return exp;
+}
+
 antlrcpp::Any CodeGenVisitor::visitMult_div(ifccParser::Mult_divContext *ctx) {
     string exp0 = visit(ctx->expression(0));
     string exp1 = visit(ctx->expression(1));
@@ -193,7 +204,6 @@ antlrcpp::Any CodeGenVisitor::visitMult_div(ifccParser::Mult_divContext *ctx) {
     int assemblerPosExp1 = getAssemblerFromVarName(exp1);
 
     cout << "    movl " << assemblerPosExp0 << "(%rbp), %eax\n";
-
     string op = ctx->children[1]->getText();
     if (op == "*") {
         cout << "    imull " <<assemblerPosExp1<<  "(%rbp), %eax\n";

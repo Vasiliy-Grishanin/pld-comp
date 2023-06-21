@@ -13,13 +13,15 @@ declaration:
 affectation: NAME '=' expression ';' ;
 
 expression:
-      '-' expression             #moinsUnaire
+    '!' expression #inverse
+    | '-' expression             #moinsUnaire
+    | expression ('+' | '-') expression  #add_sub
     | '(' expression ')'         #parentheses
     | expression ('*' | '/') expression  #mult_div
-    | expression ('+' | '-') expression  #add_sub
     | CONST                      #constExpr
     | NAME                       #varExpr
     ;
+
 
 return_stmt: RETURN expression ';' ;
 
@@ -27,5 +29,7 @@ RETURN : 'return' ;
 CONST : [0-9]+ ;
 NAME : '_'[A-Za-z][A-Za-z_0-9]* | [A-Za-z][A-Za-z_0-9]* ;
 COMMENT : '/*' .*? '*/' -> skip ;
+COMMENT_BLOC : '/*' .*? '*/' -> channel(HIDDEN) ;
+COMMENT_BIS : '//' .*? '\n'-> skip;
 DIRECTIVE : '#' .*? '\n' -> skip ;
 WS    : [ \t\r\n] -> channel(HIDDEN);
