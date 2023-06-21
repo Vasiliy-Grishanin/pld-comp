@@ -28,9 +28,6 @@ expression:
 
 function_call: NAME '(' arguments? ')' ;
 
-
-function_call: NAME '(' arguments? ')' ;
-
 arguments: expression (',' expression)* ;
 
 return_stmt: RETURN expression ';' ;
