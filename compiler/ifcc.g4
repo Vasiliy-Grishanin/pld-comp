@@ -14,16 +14,18 @@ affectation: NAME '=' expression ';' ;
 
 expression:
     '!' expression #inverse
-    | '-' expression             #moinsUnaire
-    | expression ('+' | '-') expression  #add_sub
+    |  '-' expression             #moinsUnaire
     | '(' expression ')'         #parentheses
     | expression ('*' | '/') expression  #mult_div
+    | expression ('+' | '-') expression  #add_sub
     | expression ('<' | '>') expression #supp_inf_strict
     | expression ('!=' | '==') expression #egal_diff
     | expression ('|' | '&' | '^') expression #operation_bit
     | CONST                      #constExpr
     | NAME                       #varExpr
     ;
+
+
 
 
 return_stmt: RETURN expression ';' ;
