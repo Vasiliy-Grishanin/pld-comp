@@ -13,18 +13,18 @@ declaration:
 affectation: NAME '=' expression ';' ;
 
 expression:
-    '!' expression #inverse
-    | '-' expression             #moinsUnaire
-    | expression ('+' | '-') expression  #add_sub
+      '-' expression             #moinsUnaire
     | '(' expression ')'         #parentheses
     | expression ('*' | '/') expression  #mult_div
-    | expression ('<' | '>') expression #supp_inf_strict
-    | expression ('!=' | '==') expression #egal_diff
-    | expression ('|' | '&' | '^') expression #operation_bit
+    | expression ('+' | '-') expression  #add_sub
+    | function_call              #functionCallExpr
     | CONST                      #constExpr
     | NAME                       #varExpr
     ;
 
+function_call: NAME '(' arguments? ')' ;
+
+arguments: expression (',' expression)* ;
 
 return_stmt: RETURN expression ';' ;
 
@@ -32,7 +32,5 @@ RETURN : 'return' ;
 CONST : [0-9]+ ;
 NAME : '_'[A-Za-z][A-Za-z_0-9]* | [A-Za-z][A-Za-z_0-9]* ;
 COMMENT : '/*' .*? '*/' -> skip ;
-COMMENT_BLOC : '/*' .*? '*/' -> channel(HIDDEN) ;
-COMMENT_BIS : '//' .*? '\n'-> skip;
 DIRECTIVE : '#' .*? '\n' -> skip ;
 WS    : [ \t\r\n] -> channel(HIDDEN);
