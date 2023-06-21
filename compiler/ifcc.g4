@@ -29,7 +29,6 @@ expression:
 function_call: NAME '(' arguments? ')' ;
 
 
-function_call: NAME '(' arguments? ')' ;
 
 arguments: expression (',' expression)* ;
 
@@ -39,5 +38,7 @@ RETURN : 'return' ;
 CONST : [0-9]+ ;
 NAME : '_'[A-Za-z][A-Za-z_0-9]* | [A-Za-z][A-Za-z_0-9]* ;
 COMMENT : '/*' .*? '*/' -> skip ;
+COMMENT_BLOC : '/*' .*? '*/' -> channel(HIDDEN) ;
+COMMENT_BIS : '//' .*? '\n'-> skip;
 DIRECTIVE : '#' .*? '\n' -> skip ;
 WS    : [ \t\r\n] -> channel(HIDDEN);
