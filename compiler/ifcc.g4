@@ -19,6 +19,7 @@ expression:
     | '(' expression ')'         #parentheses
     | expression ('*' | '/') expression  #mult_div
     | expression ('<' | '>') expression #supp_inf_strict
+    | expression ('!=' | '==') expression #egal_diff
     | CONST                      #constExpr
     | NAME                       #varExpr
     ;

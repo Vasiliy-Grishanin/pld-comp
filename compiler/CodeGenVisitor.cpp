@@ -237,4 +237,25 @@ antlrcpp::Any CodeGenVisitor::visitSupp_inf_strict(ifccParser::Supp_inf_strictCo
     return createTmpVar("%eax");
 }
 
+antlrcpp::Any CodeGenVisitor::visitEgal_diff(ifccParser::Egal_diffContext *ctx){
+    string exp0 = visit(ctx->expression(0));
+    string exp1 = visit(ctx->expression(1));
+
+    int assemblerPosExp0 = getAssemblerFromVarName(exp0);
+    int assemblerPosExp1 = getAssemblerFromVarName(exp1);
+    cout << "    movl " << assemblerPosExp0 << "(%rbp), %eax\n";
+    string op = ctx->children[1]->getText();
+    if(op == "!="){
+        cout << "    cmpl    " <<  assemblerPosExp1 << "(%rbp), %eax\n";
+        cout << "    setne    %al\n";
+        cout << "    movzbl  %al, %eax\n";
+    }else{
+        cout << "    cmpl    " <<  assemblerPosExp1 << "(%rbp), %eax\n";
+        cout << "    sete    %al\n";
+        cout << "    movzbl  %al, %eax\n";
+    }
+
+    return createTmpVar("%eax");
+}
+
 

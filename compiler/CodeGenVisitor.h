@@ -23,12 +23,15 @@ class  CodeGenVisitor : public ifccBaseVisitor {
 
         virtual antlrcpp::Any visitParentheses(ifccParser::ParenthesesContext *ctx) override;
 
+        //Opérations arithmétiques
         virtual antlrcpp::Any visitAdd_sub(ifccParser::Add_subContext *ctx) override;
         virtual antlrcpp::Any visitMult_div(ifccParser::Mult_divContext *ctx) override;
 
+        //Comparaisons
         virtual antlrcpp::Any visitInverse(ifccParser::InverseContext *ctx) override;
-
         virtual antlrcpp::Any visitSupp_inf_strict(ifccParser::Supp_inf_strictContext *ctx) override;
+        virtual antlrcpp::Any visitEgal_diff(ifccParser::Egal_diffContext *ctx) override;
+
         static std::unordered_map<std::string, Name> namesMap;
 };
 
