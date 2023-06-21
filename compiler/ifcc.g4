@@ -21,12 +21,16 @@ expression:
     | expression ('<' | '>') expression #supp_inf_strict
     | expression ('!=' | '==') expression #egal_diff
     | expression ('|' | '&' | '^') expression #operation_bit
+    | function_call              #functionCallExpr
     | CONST                      #constExpr
     | NAME                       #varExpr
     ;
 
 
 
+function_call: NAME '(' arguments? ')' ;
+
+arguments: expression (',' expression)* ;
 
 return_stmt: RETURN expression ';' ;
 
