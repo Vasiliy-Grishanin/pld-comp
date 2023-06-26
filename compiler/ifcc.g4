@@ -10,7 +10,7 @@ declaration:
     'int' NAME ';' #declaration_simple
     |'int' NAME '=' expression ';' #declaration_affectation;
 
-affectation: NAME '=' expression ';' ;
+affectation: NAME ('=' | ) expression ';' ;
 
 if_else_stmt: 'if' '(' expression ')' '{' instruction* '}' ('else' '{' instruction* '}')? ;
 

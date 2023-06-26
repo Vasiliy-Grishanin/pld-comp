@@ -126,19 +126,49 @@ antlrcpp::Any CodeGenVisitor::visitDeclaration_affectation(ifccParser::Declarati
     return varName;
 }
 
+antlrcpp::Any CodeGenVisitor::visitFunction_call(ifccParser::Function_callContext *ctx) {
+    //CAS APPL DE FUNCTION QUI RETOURNE RIEN int a = putchar(97)
+    string functionName = ctx->NAME()->getText();
+    string expressionName = visit(ctx->arguments());
+    // cout << "expression name " << expressionName << endl;
+    cout <<"    movl %eax, %edi\n";
+    cout <<"    call "<< functionName << "\n";
+    return createTmpVar("%eax");
+}
+
+antlrcpp::Any CodeGenVisitor::visitFunctionCallExpr(ifccParser::FunctionCallExprContext *ctx) {
+    string resultFunctionCall = visit(ctx->function_call());
+    return resultFunctionCall;
+}
+
+antlrcpp::Any CodeGenVisitor::visitArguments(ifccParser::ArgumentsContext *ctx) {
+    return visit(ctx->expression(0));
+}
+
 // NAME '=' expression ';' ;
 antlrcpp::Any CodeGenVisitor::visitAffectation(ifccParser::AffectationContext *ctx) {
-    string varName = ctx->NAME()->getText();
-    setVarInitializedTrue(varName);
+    if(ctx->children[1]->getText() == "="){
+        string varName = ctx->NAME()->getText();
+        setVarInitializedTrue(varName);
 
-    string expressionName = visit(ctx->expression());
-    int assemblerPosExpr = getAssemblerFromVarName(expressionName);
-    int assemblerPosVar = getAssemblerFromVarName(varName);
+        string expressionName = visit(ctx->expression());
+        int assemblerPosExpr = getAssemblerFromVarName(expressionName);
+        int assemblerPosVar = getAssemblerFromVarName(varName);
 
-    cout << "    movl " << assemblerPosExpr << "(%rbp), %eax\n";
-    cout << "    movl %eax, " << assemblerPosVar <<"(%rbp)\n";
+        cout << "    movl " << assemblerPosExpr << "(%rbp), %eax\n";
+        cout << "    movl %eax, " << assemblerPosVar <<"(%rbp)\n";
 
-    return varName;
+        return varName;
+    }else{
+        //CAS APPL DE FUNCTION QUI RETOURNE RIEN putchar(97)
+        string functionName = ctx->NAME()->getText();
+        string expressionName = visit(ctx->expression());
+       // cout << "expression name " << expressionName << endl;
+        cout <<"    movl %eax, %edi\n";
+        cout <<"    call "<< functionName << "\n";
+        return createTmpVar("%eax");
+    }
+
 }
 
 antlrcpp::Any CodeGenVisitor::visitParentheses(ifccParser::ParenthesesContext *ctx){
