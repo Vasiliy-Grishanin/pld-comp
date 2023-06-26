@@ -4,13 +4,15 @@ axiom : prog EOF ;
 
 prog : 'int' 'main' '(' ')' '{' instruction* return_stmt '}' ;
 
-instruction: declaration | affectation;
+instruction: declaration | affectation | if_else_stmt;
 
 declaration:
     'int' NAME ';' #declaration_simple
     |'int' NAME '=' expression ';' #declaration_affectation;
 
 affectation: NAME '=' expression ';' ;
+
+if_else_stmt: 'if' '(' expression ')' '{' instruction* '}' ('else' '{' instruction* '}')? ;
 
 expression:
     '!' expression #inverse
