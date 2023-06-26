@@ -1,10 +1,12 @@
 grammar ifcc;
 
-axiom : prog EOF ;
+axiom : prog* EOF ;
 
-prog : 'int' 'main' '(' ')' '{' instruction* return_stmt '}' ;
+prog : 'int' NAME '(' ')' bloc ;
 
-instruction: declaration | affectation | if_else_stmt;
+instruction: declaration | affectation | if_else_stmt | return_stmt;
+
+bloc : '{' instruction* '}';
 
 declaration:
     'int' NAME ';' #declaration_simple
@@ -12,10 +14,10 @@ declaration:
 
 affectation: NAME ('=' | ) expression ';' ;
 
-if_else_stmt: 'if' '(' expression ')' '{' instruction* '}' ('else' '{' instruction* '}')? ;
+if_else_stmt: 'if' '(' expression ')' bloc ('else' bloc)? ;
 
 expression:
-    '!' expression #inverse
+    '!' expression                  #inverse
     |  '-' expression             #moinsUnaire
     | '(' expression ')'         #parentheses
     | expression ('*' | '/') expression  #mult_div
