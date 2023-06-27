@@ -66,16 +66,17 @@ string createTmpVar(string registre) {
 antlrcpp::Any CodeGenVisitor::visitProg(ifccParser::ProgContext *ctx)
 {
     cout<< ".globl main\n" ;
-    cout<< " main: \n" ;
+    string fonctionName = ctx->NAME()->getText();
+    cout<< fonctionName << ": \n" ;
 
-    cout << "    # prologue\n";
+    cout << "    # " << fonctionName <<" prologue\n";
     cout << "    pushq %rbp    # save %rbp on the stack\n";
     cout << "    movq %rsp, %rbp    # define %rbp for the current function\n";
 
-    cout << "    # body\n";
+    cout << "    # " << fonctionName <<" body\n";
     this->visitChildren(ctx);
 
-    cout << "\n    # epilogue\n";
+    cout << "\n    # " << fonctionName <<" epilogue\n";
     cout << "    popq %rbp    # restore %rbp from the stack\n";
 
     cout << "    ret\n";
@@ -307,4 +308,7 @@ antlrcpp::Any CodeGenVisitor::visitOperation_bit(ifccParser::Operation_bitContex
     return createTmpVar("%eax");
 }
 
-
+antlrcpp::Any CodeGenVisitor::visitBloc(ifccParser::BlocContext *ctx) {
+    visitChildren(ctx);
+    return 0;
+}
