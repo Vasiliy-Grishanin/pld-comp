@@ -18,6 +18,7 @@ OBJECTS=build/ifccBaseVisitor.o \
 	build/ifccParser.o \
 	build/Name.o \
 	build/main.o \
+	build/FirstPassVisitor.o \
 	build/CodeGenVisitor.o
 
 

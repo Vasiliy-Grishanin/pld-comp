@@ -65,8 +65,10 @@ string createTmpVar(string registre) {
 
 antlrcpp::Any CodeGenVisitor::visitProg(ifccParser::ProgContext *ctx)
 {
-    cout<< ".globl main\n" ;
     string fonctionName = ctx->NAME()->getText();
+    if (fonctionName == "main") {
+        cout<< ".globl main\n" ;
+    }
     cout<< fonctionName << ": \n" ;
 
     cout << "    # " << fonctionName <<" prologue\n";

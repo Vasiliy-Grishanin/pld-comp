@@ -9,6 +9,7 @@
 #include "generated/ifccBaseVisitor.h"
 
 #include "CodeGenVisitor.h"
+#include "FirstPassVisitor.h"
 
 using namespace antlr4;
 using namespace std;
@@ -44,7 +45,13 @@ int main(int argn, const char **argv)
       exit(1);
   }
 
-  
+  // première passe de vérification des noms de fonctions
+  FirstPassVisitor firstPassVisitor;
+  firstPassVisitor.visit(tree);
+  // on s'assure de la bonne présence de la fonction main
+  firstPassVisitor.checkMain();
+
+  // passe qui génère le code assembleur
   CodeGenVisitor v;
   v.visit(tree);
 
