@@ -1,13 +1,12 @@
 int main(){
     int a = 2;
     int b = 4;
-
-    if(b == a){
-        a = 3;
-    }else{
-        a = 8;
+    int c = 5;
+    int d = 3;
+    if(b==a){
+        if(c == d){
+            a =5;
+        }
     }
-
     return 0;
 }
-

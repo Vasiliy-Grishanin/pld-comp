@@ -335,15 +335,20 @@ antlrcpp::Any CodeGenVisitor::visitIf_else_stmt(ifccParser::If_else_stmtContext 
         cout << "    je .L" << saveLabel << "\n";
     }
     visit(ctx->bloc(0));
-    if(ctx->bloc(1)){
+    if(ctx->children[5]){
+        //cout << "TESTTTT" << endl;
+        //cout << ctx->bloc(1)->instruction(0) << endl;
+        //ctx->c
+        //cout <<  << endl;
         listIfStatment.push_back(listIfStatment.size());
         int saveLabel1 =  listIfStatment.size() +1;
         cout << "   jmp   .L" << saveLabel1 << "\n";
         cout << ".L" << saveLabel << ":\n";
         visit(ctx->bloc(1));
         cout << ".L" << saveLabel1 <<":\n";
-
+        return 0;
     }
+    cout << ".L" << saveLabel << ":\n";
     return 0;
 }
 
