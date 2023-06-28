@@ -319,24 +319,35 @@ antlrcpp::Any CodeGenVisitor::visitBloc(ifccParser::BlocContext *ctx) {
 antlrcpp::Any CodeGenVisitor::visitIf_else_stmt(ifccParser::If_else_stmtContext *ctx){
     string a = visit(ctx->expression());
     string op = ctx->expression()->children[1]->getText();
+    listIfStatment.push_back(listIfStatment.size());
+    string then1 = "then" + to_string(listIfStatment.size());
+    string else1 = "else" + to_string(listIfStatment.size());
+    string endif1 = "endif" + to_string(listIfStatment.size());
+    //cout << "." << then1 << "\n";
+    int saveLabel = listIfStatment.size() +1;
     if(op == ">"){
-        listIfStatment.push_back(listIfStatment.size());
-        int saveLabel = listIfStatment.size() +1;
         cout << "    jle .L" << saveLabel << "\n";
-        visit(ctx->bloc(0));
-        cout << ".L" <<saveLabel<<":\n";
     }else if(op == "<"){
-        listIfStatment.push_back(listIfStatment.size());
-        int saveLabel = listIfStatment.size() +1;
         cout << "    jge .L" << saveLabel << "\n";
-        visit(ctx->bloc(0));
-        cout << ".L" <<saveLabel<<":\n";
+    }else if(op == "==") {
+        cout << "    jne .L" << saveLabel << "\n";
+    }else if(op == "!=") {
+        cout << "    je .L" << saveLabel << "\n";
+    }
+    visit(ctx->bloc(0));
+    if(ctx->bloc(1)){
+        listIfStatment.push_back(listIfStatment.size());
+        int saveLabel1 =  listIfStatment.size() +1;
+        cout << "   jmp   .L" << saveLabel1 << "\n";
+        cout << ".L" << saveLabel << ":\n";
+        visit(ctx->bloc(1));
+        cout << ".L" << saveLabel1 <<":\n";
+
     }
     return 0;
 }
 
 antlrcpp::Any CodeGenVisitor::visitWhile_stmt(ifccParser::While_stmtContext *ctx){
-
     listIfStatment.push_back(listIfStatment.size());
     int saveLabel1 = listIfStatment.size() +1;
     cout << "    jmp .L" << saveLabel1 << "\n";
