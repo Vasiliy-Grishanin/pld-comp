@@ -4,7 +4,7 @@ axiom : prog* EOF ;
 
 prog : 'int' NAME '(' ')' bloc ;
 
-instruction: declaration | affectation | if_else_stmt | return_stmt;
+instruction: declaration | affectation | if_else_stmt | return_stmt | while_stmt;
 
 bloc : '{' instruction* '}';
 
@@ -15,6 +15,8 @@ declaration:
 affectation: NAME ('=' | ) expression ';' ;
 
 if_else_stmt: 'if' '(' expression ')' bloc ('else' bloc)? ;
+
+while_stmt: 'while' '(' expression ')' bloc ;
 
 expression:
     '!' expression                  #inverse
