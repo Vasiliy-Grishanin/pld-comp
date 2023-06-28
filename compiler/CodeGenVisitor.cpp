@@ -136,7 +136,6 @@ antlrcpp::Any CodeGenVisitor::visitFunction_call(ifccParser::Function_callContex
     //CAS APPL DE FUNCTION QUI RETOURNE RIEN int a = putchar(97)
     string functionName = ctx->NAME()->getText();
     string expressionName = visit(ctx->arguments());
-    // cout << "expression name " << expressionName << endl;
     cout <<"    movl %eax, %edi\n";
     cout <<"    call "<< functionName << "\n";
     return createTmpVar("%eax");
@@ -224,7 +223,6 @@ antlrcpp::Any CodeGenVisitor::visitAdd_sub(ifccParser::Add_subContext *ctx) {
 
 antlrcpp::Any CodeGenVisitor::visitInverse(ifccParser::InverseContext *ctx){
     string exp = visit(ctx->expression());
-    //cout << "exp " << exp << endl;
     int assemblerPosExp = getAssemblerFromVarName(exp);
     cout << "    cmpl    $0, " <<  assemblerPosExp << "(%rbp)\n";
     cout << "    sete    %al\n";
@@ -334,5 +332,20 @@ antlrcpp::Any CodeGenVisitor::visitIf_else_stmt(ifccParser::If_else_stmtContext 
         visit(ctx->bloc(0));
         cout << ".L" <<saveLabel<<":\n";
     }
+    return 0;
+}
+
+antlrcpp::Any CodeGenVisitor::visitWhile_stmt(ifccParser::While_stmtContext *ctx){
+
+    listIfStatment.push_back(listIfStatment.size());
+    int saveLabel1 = listIfStatment.size() +1;
+    cout << "    jmp .L" << saveLabel1 << "\n";
+    listIfStatment.push_back(listIfStatment.size());
+    int saveLabel2 = listIfStatment.size() +1;
+    cout << ".L" << saveLabel2 << ":\n";
+    visit(ctx->bloc());
+    cout << ".L" << saveLabel1 << ":\n";
+    string a = visit(ctx->expression());
+    cout << "    jg    .L" << saveLabel2<<"\n";
     return 0;
 }

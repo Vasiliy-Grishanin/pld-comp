@@ -34,6 +34,7 @@ class  CodeGenVisitor : public ifccBaseVisitor {
         virtual antlrcpp::Any visitSupp_inf_strict(ifccParser::Supp_inf_strictContext *ctx) override;
         virtual antlrcpp::Any visitEgal_diff(ifccParser::Egal_diffContext *ctx) override;
         virtual antlrcpp::Any visitIf_else_stmt(ifccParser::If_else_stmtContext *ctx) override;
+        virtual antlrcpp::Any visitWhile_stmt(ifccParser::While_stmtContext *ctx) override;
 
         //Bit à bit
         virtual antlrcpp::Any visitOperation_bit(ifccParser::Operation_bitContext *ctx) override;
