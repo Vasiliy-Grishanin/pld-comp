@@ -5,6 +5,7 @@
 #include "antlr4-runtime.h"
 #include "generated/ifccBaseVisitor.h"
 #include "Name.h"
+#include <list>
 
 
 class  CodeGenVisitor : public ifccBaseVisitor {
@@ -32,6 +33,7 @@ class  CodeGenVisitor : public ifccBaseVisitor {
         virtual antlrcpp::Any visitInverse(ifccParser::InverseContext *ctx) override;
         virtual antlrcpp::Any visitSupp_inf_strict(ifccParser::Supp_inf_strictContext *ctx) override;
         virtual antlrcpp::Any visitEgal_diff(ifccParser::Egal_diffContext *ctx) override;
+        virtual antlrcpp::Any visitIf_else_stmt(ifccParser::If_else_stmtContext *ctx) override;
 
         //Bit à bit
         virtual antlrcpp::Any visitOperation_bit(ifccParser::Operation_bitContext *ctx) override;
@@ -40,6 +42,8 @@ class  CodeGenVisitor : public ifccBaseVisitor {
         virtual antlrcpp::Any visitFunction_call(ifccParser::Function_callContext *ctx) override;
         virtual antlrcpp::Any visitFunctionCallExpr(ifccParser::FunctionCallExprContext *ctx) override;
         virtual antlrcpp::Any visitArguments(ifccParser::ArgumentsContext *ctx) override;
+
         static std::unordered_map<std::string, Name> namesMap;
+        static std::list<int> listIfStatment;
 };
 

@@ -43,4 +43,4 @@ add_executable(pld_comp
         compiler/main.cpp
         compiler/Makefile
         compiler/Name.cpp
-        compiler/Name.h)
+        compiler/Name.h compiler/inputs/test.c)

@@ -5,6 +5,7 @@
 using namespace std;
 
 unordered_map<string, Name> CodeGenVisitor::namesMap;
+list<int> CodeGenVisitor::listIfStatment;
 
 // Utils
 int mapPosToAssembler (int position) {
@@ -60,6 +61,8 @@ string createTmpVar(string registre) {
     cout << "    movl " << registre << ", " << mapPosToAssembler(sizeStack) << "(%rbp)\n";
     return varName;
 }
+
+
 
 // Visiteurs
 
@@ -312,5 +315,24 @@ antlrcpp::Any CodeGenVisitor::visitOperation_bit(ifccParser::Operation_bitContex
 
 antlrcpp::Any CodeGenVisitor::visitBloc(ifccParser::BlocContext *ctx) {
     visitChildren(ctx);
+    return 0;
+}
+
+antlrcpp::Any CodeGenVisitor::visitIf_else_stmt(ifccParser::If_else_stmtContext *ctx){
+    string a = visit(ctx->expression());
+    string op = ctx->expression()->children[1]->getText();
+    if(op == ">"){
+        listIfStatment.push_back(listIfStatment.size());
+        int saveLabel = listIfStatment.size() +1;
+        cout << "    jle .L" << saveLabel << "\n";
+        visit(ctx->bloc(0));
+        cout << ".L" <<saveLabel<<":\n";
+    }else if(op == "<"){
+        listIfStatment.push_back(listIfStatment.size());
+        int saveLabel = listIfStatment.size() +1;
+        cout << "    jge .L" << saveLabel << "\n";
+        visit(ctx->bloc(0));
+        cout << ".L" <<saveLabel<<":\n";
+    }
     return 0;
 }
