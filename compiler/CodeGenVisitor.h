@@ -40,11 +40,8 @@ class  CodeGenVisitor : public ifccBaseVisitor {
         virtual antlrcpp::Any visitOperation_bit(ifccParser::Operation_bitContext *ctx) override;
 
         //function call
-        virtual antlrcpp::Any visitFunction_call(ifccParser::Function_callContext *ctx) override;
-        virtual antlrcpp::Any visitFunctionCallExpr(ifccParser::FunctionCallExprContext *ctx) override;
-        virtual antlrcpp::Any visitArguments(ifccParser::ArgumentsContext *ctx) override;
-
+        virtual antlrcpp::Any visitFctCallWithoutArgs(ifccParser::FctCallWithoutArgsContext *ctx) override;
+        virtual antlrcpp::Any visitFctCallWithArgs(ifccParser::FctCallWithArgsContext *ctx) override;
         static std::unordered_map<std::string, Name> namesMap;
         static std::list<int> listIfStatment;
 };
-

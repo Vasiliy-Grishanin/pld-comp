@@ -4,7 +4,7 @@ axiom : prog* EOF ;
 
 prog : 'int' NAME '(' ')' bloc ;
 
-instruction: declaration | affectation | if_else_stmt | return_stmt | while_stmt;
+instruction: declaration | affectation | if_else_stmt | return_stmt | expression | while_stmt;
 
 bloc : '{' instruction* '}';
 
@@ -12,7 +12,7 @@ declaration:
     'int' NAME ';' #declaration_simple
     |'int' NAME '=' expression ';' #declaration_affectation;
 
-affectation: NAME ('=' | ) expression ';' ;
+affectation: NAME '=' expression ';' ;
 
 if_else_stmt: 'if' '(' expression ')' bloc ('else' bloc)? ;
 
@@ -21,22 +21,21 @@ while_stmt: 'while' '(' expression ')' bloc ;
 expression:
     '!' expression                  #inverse
     |  '-' expression             #moinsUnaire
+    | NAME '(' ')' #fctCallWithoutArgs
+    | NAME '(' expression (',' expression)* ')' #fctCallWithArgs
     | '(' expression ')'         #parentheses
     | expression ('*' | '/') expression  #mult_div
     | expression ('+' | '-') expression  #add_sub
     | expression ('<' | '>') expression #supp_inf_strict
     | expression ('!=' | '==') expression #egal_diff
     | expression ('|' | '&' | '^') expression #operation_bit
-    | function_call              #functionCallExpr
     | CONST                      #constExpr
     | NAME                       #varExpr
     ;
 
-function_call: NAME '(' arguments? ')' ;
 
 
 
-arguments: expression (',' expression)* ;
 
 return_stmt: RETURN expression ';' ;
 

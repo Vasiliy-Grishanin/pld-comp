@@ -70,7 +70,7 @@ antlrcpp::Any CodeGenVisitor::visitProg(ifccParser::ProgContext *ctx)
 {
     string fonctionName = ctx->NAME()->getText();
     if (fonctionName == "main") {
-        cout<< ".globl main\n" ;
+        cout<< "    .globl main\n" ;
     }
     cout<< fonctionName << ": \n" ;
 
@@ -132,48 +132,19 @@ antlrcpp::Any CodeGenVisitor::visitDeclaration_affectation(ifccParser::Declarati
     return varName;
 }
 
-antlrcpp::Any CodeGenVisitor::visitFunction_call(ifccParser::Function_callContext *ctx) {
-    //CAS APPL DE FUNCTION QUI RETOURNE RIEN int a = putchar(97)
-    string functionName = ctx->NAME()->getText();
-    string expressionName = visit(ctx->arguments());
-    cout <<"    movl %eax, %edi\n";
-    cout <<"    call "<< functionName << "\n";
-    return createTmpVar("%eax");
-}
-
-antlrcpp::Any CodeGenVisitor::visitFunctionCallExpr(ifccParser::FunctionCallExprContext *ctx) {
-    string resultFunctionCall = visit(ctx->function_call());
-    return resultFunctionCall;
-}
-
-antlrcpp::Any CodeGenVisitor::visitArguments(ifccParser::ArgumentsContext *ctx) {
-    return visit(ctx->expression(0));
-}
-
 // NAME '=' expression ';' ;
 antlrcpp::Any CodeGenVisitor::visitAffectation(ifccParser::AffectationContext *ctx) {
-    if(ctx->children[1]->getText() == "="){
-        string varName = ctx->NAME()->getText();
-        setVarInitializedTrue(varName);
+    string varName = ctx->NAME()->getText();
+    setVarInitializedTrue(varName);
 
-        string expressionName = visit(ctx->expression());
-        int assemblerPosExpr = getAssemblerFromVarName(expressionName);
-        int assemblerPosVar = getAssemblerFromVarName(varName);
+    string expressionName = visit(ctx->expression());
+    int assemblerPosExpr = getAssemblerFromVarName(expressionName);
+    int assemblerPosVar = getAssemblerFromVarName(varName);
 
-        cout << "    movl " << assemblerPosExpr << "(%rbp), %eax\n";
-        cout << "    movl %eax, " << assemblerPosVar <<"(%rbp)\n";
+    cout << "    movl " << assemblerPosExpr << "(%rbp), %eax\n";
+    cout << "    movl %eax, " << assemblerPosVar <<"(%rbp)\n";
 
-        return varName;
-    }else{
-        //CAS APPL DE FUNCTION QUI RETOURNE RIEN putchar(97)
-        string functionName = ctx->NAME()->getText();
-        string expressionName = visit(ctx->expression());
-       // cout << "expression name " << expressionName << endl;
-        cout <<"    movl %eax, %edi\n";
-        cout <<"    call "<< functionName << "\n";
-        return createTmpVar("%eax");
-    }
-
+    return varName;
 }
 
 antlrcpp::Any CodeGenVisitor::visitParentheses(ifccParser::ParenthesesContext *ctx){
@@ -335,7 +306,7 @@ antlrcpp::Any CodeGenVisitor::visitIf_else_stmt(ifccParser::If_else_stmtContext 
         cout << "    je .L" << saveLabel << "\n";
     }
     visit(ctx->bloc(0));
-    if(ctx->children[5]){
+    if(ctx->bloc(1)){
         //cout << "TESTTTT" << endl;
         //cout << ctx->bloc(1)->instruction(0) << endl;
         //ctx->c
@@ -364,4 +335,39 @@ antlrcpp::Any CodeGenVisitor::visitWhile_stmt(ifccParser::While_stmtContext *ctx
     string a = visit(ctx->expression());
     cout << "    jg    .L" << saveLabel2<<"\n";
     return 0;
+}
+
+// NAME '(' ')' #fctCallWithoutArgs
+antlrcpp::Any CodeGenVisitor::visitFctCallWithoutArgs(ifccParser::FctCallWithoutArgsContext *ctx) {
+    string functionName = ctx->NAME()->getText();
+    cout << "    movl $0, %eax\n";
+    cout << "    call " << functionName << "\n";
+    return createTmpVar("%eax");
+}
+
+string argsRegisters[6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
+
+antlrcpp::Any CodeGenVisitor::visitFctCallWithArgs(ifccParser::FctCallWithArgsContext *ctx) {
+    string argsNames[6];
+    for (int i = 0; i < 6; ++i) {
+        auto expression = ctx->expression(i);
+        if (expression) {
+            string varNameExpression = visit(expression);
+            argsNames[i] = varNameExpression;
+        }
+    }
+
+    for (int i = 5; i >= 0; --i) {
+        auto expression = ctx->expression(i);
+        if (expression) {
+
+            cout << "    movl " << getAssemblerFromVarName(argsNames[i]) << "(%rbp), "
+                 << argsRegisters[i] << "\n";
+        }
+    }
+
+    string functionName = ctx->NAME()->getText();
+    cout << "    call " << functionName << "\n";
+
+    return createTmpVar("%eax");
 }
