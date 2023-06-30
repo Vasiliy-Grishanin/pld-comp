@@ -2,7 +2,9 @@ grammar ifcc;
 
 axiom : prog* EOF ;
 
-prog : 'int' NAME '(' ')' bloc ;
+prog : 'int' NAME '(' ')' bloc
+    | 'int' NAME '(' 'int' NAME (',' 'int' NAME)*  ')' bloc
+;
 
 instruction: declaration | affectation | if_else_stmt | return_stmt | expression | while_stmt;
 

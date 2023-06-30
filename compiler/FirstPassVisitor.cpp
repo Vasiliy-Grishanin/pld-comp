@@ -8,7 +8,7 @@ list<string> FirstPassVisitor::fonctionNames;
 
 antlrcpp::Any FirstPassVisitor::visitProg(ifccParser::ProgContext *ctx)
 {
-    string fonctionName = ctx->NAME()->getText();
+    string fonctionName = ctx->NAME(0)->getText();
     auto it = std::find(fonctionNames.begin(), fonctionNames.end(), fonctionName);
     if (it != fonctionNames.end()) {
         // la fonction a déjà été declarée

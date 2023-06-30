@@ -6,6 +6,7 @@ using namespace std;
 
 unordered_map<string, Name> CodeGenVisitor::namesMap;
 list<int> CodeGenVisitor::listIfStatment;
+string argsRegisters[6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
 
 // Utils
 int mapPosToAssembler (int position) {
@@ -22,7 +23,7 @@ int getMapPos (string varName) {
             exit(6);
         }
     } else {
-        cout << "VarName " << varName << endl;
+        cout << "VarName not found " << varName << endl;
         // variable varName non définie
         exit(5);
     }
@@ -68,15 +69,31 @@ string createTmpVar(string registre) {
 
 antlrcpp::Any CodeGenVisitor::visitProg(ifccParser::ProgContext *ctx)
 {
-    string fonctionName = ctx->NAME()->getText();
+    string fonctionName = ctx->NAME(0)->getText();
     if (fonctionName == "main") {
-        cout<< "    .globl main\n" ;
+        cout<< ".globl main\n" ;
     }
     cout<< fonctionName << ": \n" ;
 
     cout << "    # " << fonctionName <<" prologue\n";
     cout << "    pushq %rbp    # save %rbp on the stack\n";
     cout << "    movq %rsp, %rbp    # define %rbp for the current function\n";
+
+    // mise en memoire d'éventuels arguments
+    for (int i = 1; i < 7; ++i) {
+
+        if (ctx->NAME(i)) {
+            string nomArgument = ctx->NAME(i)->getText();
+            //createTmpVar(argsRegisters[i-1]);
+            int sizeStack = namesMap.size();
+            auto var = new Name(nomArgument, sizeStack, true);
+            namesMap.insert(make_pair(nomArgument, *var));
+            cout << "    movl "<<argsRegisters[i-1]<< ", " << getAssemblerFromVarName(nomArgument)<< "(%rbp)\n";
+        } else {
+            break;
+        }
+    }
+
 
     cout << "    # " << fonctionName <<" body\n";
     this->visitChildren(ctx);
@@ -344,8 +361,6 @@ antlrcpp::Any CodeGenVisitor::visitFctCallWithoutArgs(ifccParser::FctCallWithout
     cout << "    call " << functionName << "\n";
     return createTmpVar("%eax");
 }
-
-string argsRegisters[6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
 
 antlrcpp::Any CodeGenVisitor::visitFctCallWithArgs(ifccParser::FctCallWithArgsContext *ctx) {
     string argsNames[6];
