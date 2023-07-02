@@ -252,11 +252,12 @@ antlrcpp::Any CodeGenVisitor::visitSupp_inf_strict(ifccParser::Supp_inf_strictCo
         cout << "    movzbl  %al, %eax\n";
     }else{
         cout << "    cmpl    " <<  assemblerPosExp1 << "(%rbp), %eax\n";
-        cout << "    setle    %al\n";
+        cout << "    setl    %al\n";
         cout << "    movzbl  %al, %eax\n";
     }
-
-    return createTmpVar("%eax");
+    //cout << "BEFORE < > "<< endl;
+    //cout << "0" <<endl;
+    return 0;
 }
 
 antlrcpp::Any CodeGenVisitor::visitEgal_diff(ifccParser::Egal_diffContext *ctx){
@@ -306,6 +307,7 @@ antlrcpp::Any CodeGenVisitor::visitBloc(ifccParser::BlocContext *ctx) {
 
 antlrcpp::Any CodeGenVisitor::visitIf_else_stmt(ifccParser::If_else_stmtContext *ctx){
     string a = visit(ctx->expression());
+
     string op = ctx->expression()->children[1]->getText();
     listIfStatment.push_back(listIfStatment.size());
     string then1 = "then" + to_string(listIfStatment.size());
@@ -350,7 +352,9 @@ antlrcpp::Any CodeGenVisitor::visitWhile_stmt(ifccParser::While_stmtContext *ctx
     cout << ".L" << saveLabel2 << ":\n";
     visit(ctx->bloc());
     cout << ".L" << saveLabel1 << ":\n";
-    string a = visit(ctx->expression());
+    //cout << "before" << endl;
+    /*string a = */visit(ctx->expression());
+    //cout << "after" << endl;
     string op = ctx->expression()->children[1]->getText();
     cout << "    cmpl $0, %eax\n";
     if(op == ">"){
@@ -362,7 +366,7 @@ antlrcpp::Any CodeGenVisitor::visitWhile_stmt(ifccParser::While_stmtContext *ctx
     }else if(op == "!=") {
         cout << "    je .L" << saveLabel2 << "\n";
     }
-
+    visit(ctx->bloc());
 
 
     return 0;

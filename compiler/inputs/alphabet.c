@@ -2,10 +2,10 @@ int main() {
 
     int lettre = 65; // Valeur ASCII de 'A'
 
-    int a = 0;
+
 
     while (lettre < 91) { // Valeur ASCII de 'Z'
-        a = putchar(lettre);
+        int a = putchar(lettre);
         lettre = lettre + 1;
     }
 
