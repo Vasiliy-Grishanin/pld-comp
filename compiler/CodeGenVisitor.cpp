@@ -78,6 +78,7 @@ antlrcpp::Any CodeGenVisitor::visitProg(ifccParser::ProgContext *ctx)
     cout << "    # " << fonctionName <<" prologue\n";
     cout << "    pushq %rbp    # save %rbp on the stack\n";
     cout << "    movq %rsp, %rbp    # define %rbp for the current function\n";
+    cout << "    subq $16, %rsp\n";
 
     // mise en memoire d'éventuels arguments
     for (int i = 1; i < 7; ++i) {
@@ -99,7 +100,7 @@ antlrcpp::Any CodeGenVisitor::visitProg(ifccParser::ProgContext *ctx)
     this->visitChildren(ctx);
 
     cout << "\n    # " << fonctionName <<" epilogue\n";
-    cout << "    popq %rbp    # restore %rbp from the stack\n";
+    cout << "    leave    # restore %rbp from the stack\n";
 
     cout << "    ret\n";
 
@@ -239,13 +240,13 @@ antlrcpp::Any CodeGenVisitor::visitMult_div(ifccParser::Mult_divContext *ctx) {
 }
 
 antlrcpp::Any CodeGenVisitor::visitSupp_inf_strict(ifccParser::Supp_inf_strictContext *ctx){
-    string exp0 = visit(ctx->expression(0));
-    string exp1 = visit(ctx->expression(1));
+    string exp0 = visit(ctx->expression(0)); //65
+    string exp1 = visit(ctx->expression(1)); //91
 
     int assemblerPosExp0 = getAssemblerFromVarName(exp0);
     int assemblerPosExp1 = getAssemblerFromVarName(exp1);
-    cout << "    movl " << assemblerPosExp0 << "(%rbp), %eax\n";
     string op = ctx->children[1]->getText();
+    cout << "    movl " << assemblerPosExp0 << "(%rbp), %eax\n";
     if(op == ">"){
         cout << "    cmpl    " <<  assemblerPosExp1 << "(%rbp), %eax\n";
         cout << "    setg    %al\n";
@@ -257,7 +258,7 @@ antlrcpp::Any CodeGenVisitor::visitSupp_inf_strict(ifccParser::Supp_inf_strictCo
     }
     //cout << "BEFORE < > "<< endl;
     //cout << "0" <<endl;
-    return 0;
+    return createTmpVar("%eax");
 }
 
 antlrcpp::Any CodeGenVisitor::visitEgal_diff(ifccParser::Egal_diffContext *ctx){
@@ -306,7 +307,7 @@ antlrcpp::Any CodeGenVisitor::visitBloc(ifccParser::BlocContext *ctx) {
 }
 
 antlrcpp::Any CodeGenVisitor::visitIf_else_stmt(ifccParser::If_else_stmtContext *ctx){
-    string a = visit(ctx->expression());
+    visit(ctx->expression());
 
     string op = ctx->expression()->children[1]->getText();
     listIfStatment.push_back(listIfStatment.size());
@@ -352,21 +353,9 @@ antlrcpp::Any CodeGenVisitor::visitWhile_stmt(ifccParser::While_stmtContext *ctx
     cout << ".L" << saveLabel2 << ":\n";
     visit(ctx->bloc());
     cout << ".L" << saveLabel1 << ":\n";
-    //cout << "before" << endl;
-    /*string a = */visit(ctx->expression());
-    //cout << "after" << endl;
-    string op = ctx->expression()->children[1]->getText();
-    cout << "    cmpl $0, %eax\n";
-    if(op == ">"){
-        cout << "    jg .L" << saveLabel2 << "\n";
-    }else if(op == "<"){
-        cout << "    jle .L" << saveLabel2 << "\n";
-    }else if(op == "==") {
-        cout << "    jne .L" << saveLabel2 << "\n";
-    }else if(op == "!=") {
-        cout << "    je .L" << saveLabel2 << "\n";
-    }
-    visit(ctx->bloc());
+    visit(ctx->expression());
+    cout << "    jl .L" << saveLabel2 << "\n";
+
 
 
     return 0;
