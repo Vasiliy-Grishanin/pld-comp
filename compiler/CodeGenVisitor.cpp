@@ -252,7 +252,7 @@ antlrcpp::Any CodeGenVisitor::visitSupp_inf_strict(ifccParser::Supp_inf_strictCo
         cout << "    movzbl  %al, %eax\n";
     }else{
         cout << "    cmpl    " <<  assemblerPosExp1 << "(%rbp), %eax\n";
-        cout << "    setl    %al\n";
+        cout << "    setle    %al\n";
         cout << "    movzbl  %al, %eax\n";
     }
 
@@ -343,14 +343,28 @@ antlrcpp::Any CodeGenVisitor::visitIf_else_stmt(ifccParser::If_else_stmtContext 
 antlrcpp::Any CodeGenVisitor::visitWhile_stmt(ifccParser::While_stmtContext *ctx){
     listIfStatment.push_back(listIfStatment.size());
     int saveLabel1 = listIfStatment.size() +1;
-    cout << "    jmp .L" << saveLabel1 << "\n";
+    //cout << "    jmp .L" << saveLabel1 << "\n";
     listIfStatment.push_back(listIfStatment.size());
     int saveLabel2 = listIfStatment.size() +1;
+    cout << "jmp   .L"<<saveLabel1<<"\n";
     cout << ".L" << saveLabel2 << ":\n";
     visit(ctx->bloc());
     cout << ".L" << saveLabel1 << ":\n";
     string a = visit(ctx->expression());
-    cout << "    jg    .L" << saveLabel2<<"\n";
+    string op = ctx->expression()->children[1]->getText();
+    cout << "    cmpl $0, %eax\n";
+    if(op == ">"){
+        cout << "    jg .L" << saveLabel2 << "\n";
+    }else if(op == "<"){
+        cout << "    jle .L" << saveLabel2 << "\n";
+    }else if(op == "==") {
+        cout << "    jne .L" << saveLabel2 << "\n";
+    }else if(op == "!=") {
+        cout << "    je .L" << saveLabel2 << "\n";
+    }
+
+
+
     return 0;
 }
 

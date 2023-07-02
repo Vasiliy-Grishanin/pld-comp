@@ -43,4 +43,4 @@ add_executable(pld_comp
         compiler/main.cpp
         compiler/Makefile
         compiler/Name.cpp
-        compiler/Name.h compiler/inputs/test.c)
+        compiler/Name.h compiler/inputs/test.c compiler/inputs/IfSimple.c tests/testfiles/IfImbrique.c compiler/inputs/WhileSimple.c)
